@@ -1,0 +1,334 @@
+/* Mobile-First Responsive Utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root Variables */
+:root {
+  --touch-target-min: 44px;
+  --mobile-spacing: 1rem;
+  --tablet-spacing: 1.5rem;
+  --desktop-spacing: 2rem;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar Styles - All Devices */
+.notion-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.notion-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notion-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.dark .notion-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* Thin scrollbar for mobile */
+@media (max-width: 768px) {
+  .notion-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Touch-Friendly Form Controls */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px; /* Prevents zoom on iOS */
+    min-height: var(--touch-target-min);
+  }
+
+  button,
+  a[role="button"],
+  .btn {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+}
+
+/* Responsive Table Container */
+.responsive-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-table-container {
+    margin: 0;
+  }
+}
+
+.responsive-table-container table {
+  min-width: max-content;
+}
+
+/* Mobile Modal Optimizations */
+@media (max-width: 768px) {
+  .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+}
+
+/* Responsive Grid Utilities */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .grid-responsive-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid-responsive-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile Sidebar Animation */
+.sidebar-mobile {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-mobile.open {
+  transform: translateX(0);
+}
+
+/* Backdrop Overlay */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 40;
+}
+
+.backdrop.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .mobile-nav-item {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+/* Responsive Typography */
+.text-responsive-xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+@media (min-width: 768px) {
+  .text-responsive-xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive-xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+.text-responsive-lg {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .text-responsive-lg {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+/* Card Spacing */
+.card-mobile {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .card-mobile {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-mobile {
+    padding: 2rem;
+  }
+}
+
+/* Stack on Mobile Utility */
+.stack-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .stack-mobile {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Hide/Show Utilities */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .show-mobile {
+    display: none !important;
+  }
+}
+
+/* Swipe Indicator for Tables */
+.swipe-indicator {
+  position: relative;
+}
+
+.swipe-indicator::after {
+  content: '← Swipe to view more →';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #94a3b8;
+  padding: 0.25rem 0.5rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .swipe-indicator::after {
+    display: none;
+  }
+}
+
+/* Safe Area for Mobile Devices (notch support) */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Animations */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Focus Visible for Accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
