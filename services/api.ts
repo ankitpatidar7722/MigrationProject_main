@@ -176,6 +176,19 @@ export const api = {
       return handleResponse<{ projects: any[]; transfers: any[]; issues: any[]; stats: Record<number, any> }>(response);
     },
 
+    getDetailAll: async (id: number): Promise<{
+      project: Project;
+      transfers: DataTransferCheck[];
+      verifications: VerificationRecord[];
+      issues: MigrationIssue[];
+      customizations: CustomizationPoint[];
+      manualConfigs: ManualConfiguration[];
+      excelData: ExcelData[];
+    }> => {
+      const response = await fetch(`${BASE_URL}/Projects/${id}/detail-all`);
+      return handleResponse<any>(response);
+    },
+
     clone: async (sourceId: number, targetId: number): Promise<void> => {
       const response = await fetch(`${BASE_URL}/Projects/${sourceId}/clone/${targetId}`, {
         method: 'POST'

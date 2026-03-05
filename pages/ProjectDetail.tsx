@@ -60,45 +60,16 @@ const ProjectDetail: React.FC = () => {
 
     const loadData = async () => {
       try {
-        // 1. Load Projects first (Critical)
-        const projectsData = await storageService.getProjects();
-        const foundProject = projectsData.find(p => p.projectId === projectId);
+        // Single API call returns project + all sub-module data
+        const data = await api.projects.getDetailAll(projectId);
 
-        if (!foundProject) {
-          setProject(null);
-          setLoading(false);
-          return;
-        }
-
-        setProject(foundProject);
-
-        // 2. Load other modules (Parallel)
-        const [transfersData, verificationsData, issuesData, customizationsData] = await Promise.all([
-          storageService.getTransferChecks(projectId),
-          storageService.getVerifications(projectId),
-          storageService.getIssues(projectId),
-          storageService.getCustomizations(projectId)
-        ]);
-
-        setTransfers(transfersData);
-        setVerifications(verificationsData);
-        setIssues(issuesData);
-        setCustomizations(customizationsData);
-
-        // 3. Load Manual Configs (Non-Critical - Try/Catch)
-        try {
-          // Load Manual Configs & Excel Data (Non-Critical)
-          const [manualConfigsData, excelDataList] = await Promise.all([
-            api.manualConfigurations.getByProject(projectId),
-            project.migrationType === 'By Excel' ? api.excelData.getByProject(projectId) : Promise.resolve([])
-          ]);
-          setManualConfigs(manualConfigsData || []);
-          setExcelData(excelDataList || []);
-        } catch (configErr) {
-          console.error('Failed to load aux configurations:', configErr);
-          setManualConfigs([]);
-        }
-
+        setProject(data.project);
+        setTransfers(data.transfers || []);
+        setVerifications(data.verifications || []);
+        setIssues(data.issues || []);
+        setCustomizations(data.customizations || []);
+        setManualConfigs(data.manualConfigs || []);
+        setExcelData(data.excelData || []);
       } catch (err) {
         console.error('Error loading project data:', err);
       } finally {
