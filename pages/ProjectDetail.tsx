@@ -60,9 +60,8 @@ const ProjectDetail: React.FC = () => {
 
     const loadData = async () => {
       try {
-        // Single API call returns project + all sub-module data
+        // Try unified endpoint first (1 API call instead of 6-7)
         const data = await api.projects.getDetailAll(projectId);
-
         setProject(data.project);
         setTransfers(data.transfers || []);
         setVerifications(data.verifications || []);
@@ -71,7 +70,34 @@ const ProjectDetail: React.FC = () => {
         setManualConfigs(data.manualConfigs || []);
         setExcelData(data.excelData || []);
       } catch (err) {
-        console.error('Error loading project data:', err);
+        console.error('detail-all failed, falling back to individual calls:', err);
+        try {
+          // Fallback: load project first, then sub-modules
+          const projectData = await api.projects.getById(projectId);
+          setProject(projectData);
+
+          const [transfersData, verificationsData, issuesData, customizationsData] = await Promise.all([
+            api.dataTransfer.getByProject(projectId),
+            api.verification.getByProject(projectId),
+            api.issues.getByProject(projectId),
+            api.customization.getByProject(projectId)
+          ]);
+          setTransfers(transfersData || []);
+          setVerifications(verificationsData || []);
+          setIssues(issuesData || []);
+          setCustomizations(customizationsData || []);
+
+          try {
+            const [manualConfigsData, excelDataList] = await Promise.all([
+              api.manualConfigurations.getByProject(projectId),
+              projectData.migrationType === 'By Excel' ? api.excelData.getByProject(projectId) : Promise.resolve([])
+            ]);
+            setManualConfigs(manualConfigsData || []);
+            setExcelData(excelDataList || []);
+          } catch { setManualConfigs([]); setExcelData([]); }
+        } catch (fallbackErr) {
+          console.error('Fallback also failed:', fallbackErr);
+        }
       } finally {
         setLoading(false);
       }
