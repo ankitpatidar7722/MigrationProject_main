@@ -201,7 +201,7 @@ const WebTableManager: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6 w-full max-w-[95%] mx-auto">
+        <div className="space-y-6 w-full">
             <Link
                 to="/"
                 className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors mb-2"

@@ -303,7 +303,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
           </header>
           <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#f0f2f5] dark:bg-[#050505] notion-scrollbar">
-            <div className="max-w-7xl mx-auto">{children}</div>
+            <div className="w-full">{children}</div>
           </div>
         </main>
       </div>
