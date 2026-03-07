@@ -142,7 +142,7 @@ const ProjectDetail: React.FC = () => {
       desc: 'Plan and track table migration status',
       icon: <Database size={24} />,
       count: transfers.length,
-      completed: transfers.filter(t => t.status === 'Completed').length,
+      completed: transfers.filter(t => t.status === 'Completed' || t.status === 'No Data').length,
       color: 'blue',
       path: 'transfer',
       params: 'Data Transfer Checks'
