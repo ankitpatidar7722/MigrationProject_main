@@ -24,6 +24,8 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
     onChange,
     placeholder = "Select...",
     className = "",
+    name,
+    required,
     disabled = false,
     error = false
 }) => {
