@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../services/AuthContext';
 import { VerificationRecord, VerificationStatus, ModuleMaster, FieldMaster, WebTable } from '../types';
-import { Plus, Search, Filter, Trash2, Edit3, Download, Check, Code, MessageSquare, Info, ShieldCheck, Loader2, Copy, ArrowLeft } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Edit3, Download, Check, Code, MessageSquare, Info, ShieldCheck, Loader2, Copy, ArrowLeft, ChevronDown } from 'lucide-react';
 import { LoadingOverlay } from '../components/LoadingOverlay';
 import { useRefresh } from '../services/RefreshContext';
 import { useLanguage } from '../services/LanguageContext';
@@ -23,6 +23,8 @@ const VerificationList: React.FC = () => {
   const [editingItem, setEditingItem] = useState<VerificationRecord | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<VerificationStatus>('Pending');
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: number | null }>({ show: false, id: null });
+  const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
 
   const [moduleMasters, setModuleMasters] = useState<ModuleMaster[]>([]);
   const [webTables, setWebTables] = useState<WebTable[]>([]);
@@ -188,10 +190,12 @@ const VerificationList: React.FC = () => {
     }
   };
 
-  const filtered = items.filter(i =>
-    i.moduleName.toLowerCase().includes(search.toLowerCase()) ||
-    i.fieldName.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = items.filter(i => {
+    const matchesSearch = i.moduleName.toLowerCase().includes(search.toLowerCase()) ||
+      i.fieldName.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || i.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   if (loading) {
     return <LoadingOverlay isVisible={true} message={t('loading_data')} />;
@@ -219,19 +223,50 @@ const VerificationList: React.FC = () => {
             <p className="text-slate-500 dark:text-zinc-400 mt-1">{t('audit_verify_description')}</p>
           </div>
         </div>
-        {hasPermission('Verification List', 'Create') && (
-          <button
-            onClick={() => {
-              setEditingItem(null);
-              setSelectedStatus('Pending');
-              setShowModal(true);
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-all"
-          >
-            <Plus size={18} />
-            {t('new_verification')}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {hasPermission('Verification List', 'Create') && (
+            <button
+              onClick={() => {
+                setEditingItem(null);
+                setSelectedStatus('Pending');
+                setShowModal(true);
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-all"
+            >
+              <Plus size={18} />
+              {t('new_verification')}
+            </button>
+          )}
+          <div className="relative">
+            <button
+              onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg font-medium shadow-sm transition-all hover:border-blue-400"
+            >
+              <Filter size={16} />
+              <span>{statusFilter === 'All' ? 'Status' : statusFilter}</span>
+              <ChevronDown size={16} className={`transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            {showStatusDropdown && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowStatusDropdown(false)} />
+                <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-xl overflow-hidden min-w-[160px]">
+                  {['All', 'Pending', 'Correct', 'Incorrect', 'Re-verify'].map(status => (
+                    <button
+                      key={status}
+                      onClick={() => { setStatusFilter(status); setShowStatusDropdown(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors ${statusFilter === status
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : 'hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300'
+                        }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="relative">
