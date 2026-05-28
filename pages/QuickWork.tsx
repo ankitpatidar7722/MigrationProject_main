@@ -115,7 +115,7 @@ const QuickWorkPage: React.FC = () => {
             };
 
             if (editingId && !isSaveAs) {
-                await api.quickWorks.update(editingId, payload);
+                await api.quickWorks.update(editingId, { ...payload, id: editingId });
             } else {
                 await api.quickWorks.create(payload);
             }
